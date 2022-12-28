@@ -1,11 +1,17 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 
 /**
  * User Schema
  */
 export default {
-  name: 'User',
+  name: "User",
   attribute: {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true, // Automatically gets converted to SERIAL for postgres
+      unique: true,
+    },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -15,5 +21,6 @@ export default {
       type: DataTypes.DATE,
       allowNull: false,
     },
-  }
+  },
+  others: {},
 };

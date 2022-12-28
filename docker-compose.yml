@@ -38,9 +38,14 @@ services:
       - amida-db
 
   amida-db:
-    image: "postgres:15.1-alpine3.16"
+    image: "postgres:latest"
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=api
       - POSTGRES_PASSWORD=boilerplate
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
