@@ -1,5 +1,5 @@
-import httpStatus from 'http-status';
-import db from '../../config/sequelize';
+import httpStatus from "http-status";
+import db from "../../config/sequelize";
 
 const { User } = db;
 
@@ -10,7 +10,7 @@ function load(req, res, next, id) {
   User.findOne({ where: { id } })
     .then((user) => {
       if (!user) {
-        const e = new Error('User does not exist');
+        const e = new Error("User does not exist");
         e.status = httpStatus.NOT_FOUND;
         return next(e);
       }
@@ -34,15 +34,33 @@ function get(req, res) {
  * @property {string} req.body.mobileNumber - The mobileNumber of user.
  * @returns {User}
  */
-function create(req, res, next) {
-  const user = User.build({
-    username: req.body.username,
+const create = async (req, res, next) => {
+  // const user = User.build({
+  //   username: req.body.username,
+  // });
+
+  const { username, password } = req.body;
+
+  const userExists = await User.findOne({
+    where: { username: username.trim() },
   });
 
-  user.save()
-    .then((savedUser) => res.json(savedUser))
-    .catch((e) => next(e));
-}
+  if (userExists !== null) {
+    res.status(httpStatus.NO_CONTENT).json({ message: "User Already exists." });
+  }
+
+  // Hash password
+  const hashedPwd = await bcrypt.hash(password, 10); // salt rounds
+
+  const user = User.build({
+    username: username,
+    password: hashedPwd,
+  });
+
+  let newUser = await user.save();
+
+  res.status(httpStatus.OK).json(newUser);
+};
 
 /**
  * Update existing user
@@ -55,7 +73,8 @@ function update(req, res, next) {
   user.username = req.body.username;
   user.mobileNumber = req.body.mobileNumber;
 
-  user.save()
+  user
+    .save()
     .then((savedUser) => res.json(savedUser))
     .catch((e) => next(e));
 }
@@ -80,11 +99,17 @@ function list(req, res, next) {
 function remove(req, res, next) {
   const { user } = req;
   const { username } = req.user;
-  user.destroy()
+  user
+    .destroy()
     .then(() => res.json(username))
     .catch((e) => next(e));
 }
 
 export default {
-  load, get, create, update, list, remove,
+  load,
+  get,
+  create,
+  update,
+  list,
+  remove,
 };

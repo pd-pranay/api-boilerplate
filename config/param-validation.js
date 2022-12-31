@@ -1,10 +1,11 @@
-import { Joi } from 'express-validation';
+import { Joi } from "express-validation";
 
 export default {
   // POST /api/users
   createUser: {
     body: Joi.object({
       username: Joi.string().required(),
+      password: Joi.string().required(),
     }),
   },
 
