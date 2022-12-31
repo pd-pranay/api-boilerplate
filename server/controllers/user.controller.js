@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import db from "../../config/sequelize";
-
+import bcrypt from 'bcrypt';
 const { User } = db;
 
 /**
@@ -40,7 +40,6 @@ const create = async (req, res, next) => {
   // });
 
   const { username, password } = req.body;
-
   const userExists = await User.findOne({
     where: { username: username.trim() },
   });
@@ -51,14 +50,12 @@ const create = async (req, res, next) => {
 
   // Hash password
   const hashedPwd = await bcrypt.hash(password, 10); // salt rounds
-
   const user = User.build({
     username: username,
     password: hashedPwd,
   });
 
   let newUser = await user.save();
-
   res.status(httpStatus.OK).json(newUser);
 };
 

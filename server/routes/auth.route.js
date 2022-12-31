@@ -4,7 +4,7 @@ import { expressjwt } from 'express-jwt';
 import paramValidation from '../../config/param-validation';
 import authCtrl from '../controllers/auth.controller';
 import config from '../../config/config';
-
+import verifyJWT from '../middlewares/jwt.middleware'
 const router = express.Router(); // eslint-disable-line new-cap
 
 /**
@@ -18,9 +18,6 @@ router.route('/login')
  * Authorization: Bearer {token}
  */
 router.route('/random-number')
-  .get(expressjwt({
-    secret: config.jwtSecret,
-    algorithms: ['HS256'],
-  }), authCtrl.getRandomNumber);
+  .get(verifyJWT, authCtrl.getRandomNumber);
 
 export default router;

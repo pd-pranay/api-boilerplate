@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import APIError from "../helpers/APIError";
 import config from "../../config/config";
 import db from "../../config/sequelize";
-
+import bcrypt from 'bcrypt';
 const { User } = db;
 
 // sample user, used for authentication
@@ -47,7 +47,7 @@ function loginold(req, res, next) {
   return next(err);
 }
 
-const login = async () => {
+const login = async (req, res, next) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ where: { username: username.trim() } });
@@ -55,7 +55,7 @@ const login = async () => {
     return res.status(204).json({ message: "No such user" });
   }
 
-  const match = await bcrypt.compare(password, iser.password);
+  const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(401).json({ message: "Unauthorized" });
 
   const accessToken = jwt.sign(
