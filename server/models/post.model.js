@@ -25,6 +25,7 @@ export default {
         model: "Users",
         key: "id",
       },
+      field: 'user_id'
     },
     createdAt: {
       type: DataTypes.DATE,

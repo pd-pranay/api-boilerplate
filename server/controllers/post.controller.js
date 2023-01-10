@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import db from "../../config/sequelize";
 
-const { Post, QueryTypes, sequelize } = db;
+const { Post, User, QueryTypes, sequelize } = db;
 
 function create(req, res, next) {
   const post = Post.build({
@@ -18,12 +18,11 @@ function create(req, res, next) {
 }
 
 const list = (req, res, next) => {
-  // Post.findAll({ limit })
-  //     .then((users) => res.json(users))
-  //     .catch((e) => next(e));
   // Callee is the model definition. This allows you to easily map a query to a predefined model
   sequelize
-    .query(`SELECT id, post_name as name, post_description  from "Posts"`, {
+    // SELECT id, post_name as name, post_description  from "Posts"
+    .query(`SELECT p.id, p.post_name , p.post_description, p.color, p.user_id, u.username  FROM "Posts" as p INNER JOIN "Users" as u
+    ON u.id = p.user_id ;`, {
       QueryTypes: QueryTypes.SELECT,
       model: Post,
       mapToModel: true,
